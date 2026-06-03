@@ -1,0 +1,45 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
+import '../styles/global.css';
+
+import { t } from '../i18n/ui';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  noindex?: boolean;
+  article?: { publishedTime?: string; modifiedTime?: string; tags?: string[] };
+}
+const { title, description, ogType = 'website', ogImage, noindex = false, article } = Astro.props;
+const desc = description ?? t('site.description');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={title}
+      description={desc}
+      ogType={ogType}
+      ogImage={ogImage}
+      noindex={noindex}
+      article={article}
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t('a11y.skip')}</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,216 @@
+---
+import { NAV } from '../consts';
+import { withBase } from '../lib/url';
+import { t } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+const norm = (p: string) => {
+  const x = p.replace(/\/+$/, '');
+  return x === '' ? '/' : x;
+};
+const here = norm(Astro.url.pathname);
+const homeHref = withBase('/');
+const isActive = (path: string) => {
+  const target = norm(withBase(path));
+  if (path === '/') return here === target;
+  return here === target || here.startsWith(target + '/');
+};
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href={homeHref} aria-label="Marco Ferrara - home">
+      <span class="brand-mark" aria-hidden="true">mf</span>
+      <span class="brand-text">Marco Ferrara</span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Primary">
+      {
+        NAV.map((item) => (
+          <a
+            href={withBase(item.path)}
+            class:list={['nav-link', { active: isActive(item.path) }]}
+            aria-current={isActive(item.path) ? 'page' : undefined}
+          >
+            {t(item.key)}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="header-actions">
+      <a
+        class="icon-link"
+        href="https://github.com/imb0ru"
+        target="_blank"
+        rel="me noopener"
+        aria-label="GitHub"
+      >
+        <Icon name="github" size={19} />
+      </a>
+
+      <details class="nav-mobile">
+        <summary aria-label={t('a11y.menu')}>
+          <Icon name="menu" size={22} />
+        </summary>
+        <nav class="nav-mobile-panel" aria-label="Primary">
+          {
+            NAV.map((item) => (
+              <a href={withBase(item.path)} class:list={['nav-link', { active: isActive(item.path) }]}>
+                {t(item.key)}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .brand:hover {
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--tag);
+    background: var(--tag-soft);
+    border: 1px solid var(--tag-line);
+  }
+
+  .nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-inline: auto;
+  }
+  .nav-link {
+    padding: 0.45rem 0.7rem;
+    border-radius: 7px;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    transition: color var(--transition), background var(--transition);
+  }
+  .nav-link:hover {
+    color: var(--text);
+    background: var(--bg-elev);
+    text-decoration: none;
+  }
+  .nav-link.active {
+    color: var(--text);
+  }
+  .nav-link.active::after {
+    content: '';
+    display: block;
+    height: 2px;
+    margin-top: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .icon-link {
+    display: inline-flex;
+    padding: 0.45rem;
+    border-radius: 8px;
+    color: var(--text-dim);
+    transition: color var(--transition), background var(--transition);
+  }
+  .icon-link:hover {
+    color: var(--text);
+    background: var(--bg-elev);
+  }
+
+  .nav-mobile {
+    position: relative;
+    display: none;
+  }
+  .nav-mobile summary {
+    display: inline-flex;
+    padding: 0.4rem;
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    list-style: none;
+  }
+  .nav-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-mobile[open] summary {
+    background: var(--bg-elev);
+  }
+  .nav-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.6rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 190px;
+    padding: 0.5rem;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .nav-mobile-panel .nav-link {
+    padding: 0.6rem 0.7rem;
+  }
+  .nav-mobile-panel .nav-link.active {
+    color: var(--accent);
+  }
+  .nav-mobile-panel .nav-link.active::after {
+    display: none;
+  }
+
+  @media (max-width: 820px) {
+    .nav-desktop {
+      display: none;
+    }
+    .nav-mobile {
+      display: block;
+    }
+    .brand-text {
+      display: none;
+    }
+  }
+</style>

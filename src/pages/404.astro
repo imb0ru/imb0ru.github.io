@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
+import { t } from '../i18n/ui';
+---
+
+<BaseLayout title={t('notfound.title')} noindex={true}>
+  <section class="container notfound">
+    <p class="eyebrow">404</p>
+    <h1>{t('notfound.title')}</h1>
+    <p class="lede">{t('notfound.lede')}</p>
+    <a class="btn btn-primary" href={withBase('/')}>{t('notfound.cta')}</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    padding: 6rem 0;
+    text-align: center;
+  }
+  .notfound h1 {
+    font-size: var(--fs-2xl);
+    margin-top: 0.6rem;
+  }
+  .notfound .lede {
+    margin: 1rem auto 2rem;
+  }
+</style>

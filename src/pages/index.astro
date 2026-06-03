@@ -1,0 +1,281 @@
+---
+import { SECTIONS, SITE, FOCUS_AREAS } from '../consts';
+import { getAllEntries } from '../lib/content';
+import { withBase } from '../lib/url';
+import { t } from '../i18n/ui';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContentCard from '../components/ContentCard.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Icon from '../components/Icon.astro';
+
+const all = await getAllEntries();
+const latest = all.slice(0, 6);
+const counts = Object.fromEntries(
+  SECTIONS.map((s) => [s, all.filter((i) => i.section === s).length])
+) as Record<string, number>;
+---
+
+<BaseLayout title="">
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="glow hero-glow"></div>
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">{t('hero.eyebrow')}</p>
+        <h1 class="hero-title">Marco Ferrara</h1>
+        <p class="hero-role">{t('site.role')}</p>
+        <p class="hero-lede lede">{t('hero.lede')}</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href={withBase('/blog/writeups')}>
+            {t('hero.cta.writeups')}
+            <Icon name="arrow-right" size={16} />
+          </a>
+          <a class="btn btn-ghost" href={withBase('/about')}>{t('hero.cta.about')}</a>
+        </div>
+        <div class="hero-socials"><SocialLinks /></div>
+      </div>
+
+      <aside class="hero-card">
+        <div class="hero-card-bar">
+          <span class="wd"></span><span class="wd"></span><span class="wd"></span>
+          <span class="hero-card-name mono">whoami</span>
+        </div>
+        <dl class="hero-card-body">
+          <div><dt class="mono">alias</dt><dd class="mono">{SITE.handle}</dd></div>
+          <div><dt class="mono">role</dt><dd>DFIR Analyst</dd></div>
+          <div><dt class="mono">company</dt><dd>{SITE.employer.name}</dd></div>
+          <div><dt class="mono">based</dt><dd>{SITE.location}</dd></div>
+          <div><dt class="mono">team</dt><dd>{SITE.team.name}</dd></div>
+        </dl>
+        <div class="hero-card-tags">
+          {FOCUS_AREAS.slice(0, 5).map((f) => <span class="tag">{f}</span>)}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="container stats">
+    {
+      SECTIONS.map((s) => (
+        <a class="stat" href={withBase(`/blog/${s}`)}>
+          <span class="stat-num mono">{String(counts[s] ?? 0).padStart(2, '0')}</span>
+          <span class="stat-label">{t(`type.${s}`)}</span>
+        </a>
+      ))
+    }
+  </section>
+
+  {
+    latest.length > 0 && (
+      <section class="container home-latest">
+        <header class="home-section-head">
+          <div>
+            <h2 class="home-section-title">{t('home.latest.title')}</h2>
+            <p class="home-section-lede text-dim">{t('home.latest.lede')}</p>
+          </div>
+          <a class="view-all" href={withBase('/blog')}>
+            {t('home.viewAll')}
+            <Icon name="arrow-right" size={15} />
+          </a>
+        </header>
+        <div class="card-grid">
+          {latest.map((it) => (
+            <ContentCard entry={it.entry} section={it.section} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 3rem 0 clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-glow {
+    width: 520px;
+    height: 520px;
+    top: -190px;
+    right: -130px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .hero-title {
+    font-size: var(--fs-2xl);
+    margin-top: 1rem;
+    letter-spacing: -0.03em;
+  }
+  .hero-role {
+    margin-top: 0.5rem;
+    font-size: var(--fs-lg);
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .hero-lede {
+    margin-top: 1.3rem;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.8rem;
+  }
+  .hero-socials {
+    margin-top: 2.5rem;
+    margin-left: -0.45rem;
+  }
+
+  /* whoami card */
+  .hero-card {
+    align-self: center;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--bg-elev), var(--bg-elev-2));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .hero-card-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .wd {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+  .hero-card-name {
+    margin-left: 0.4rem;
+    font-size: 0.74rem;
+    color: var(--text-faint);
+  }
+  .hero-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 1.1rem 1.2rem;
+  }
+  .hero-card-body > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 0.6rem;
+  }
+  .hero-card-body > div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .hero-card-body dt {
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+  .hero-card-body dd {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.9rem;
+    text-align: right;
+  }
+  .hero-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 1.2rem 1.2rem;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .stat:hover {
+    text-decoration: none;
+    border-color: var(--accent-line);
+    transform: translateY(-2px);
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.86rem;
+    color: var(--text-dim);
+  }
+
+  /* Latest feed */
+  .home-latest {
+    margin-top: 4rem;
+  }
+  .home-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .home-section-title {
+    font-size: var(--fs-lg);
+  }
+  .home-section-lede {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+  }
+  .view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.1rem;
+  }
+
+  @media (max-width: 880px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 2.2rem;
+    }
+  }
+  @media (max-width: 620px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .home-section-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

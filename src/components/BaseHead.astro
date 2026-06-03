@@ -1,0 +1,61 @@
+---
+import { SITE } from '../consts';
+import { withBase } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  noindex?: boolean;
+  article?: { publishedTime?: string; modifiedTime?: string; tags?: string[] };
+}
+const { title, description, ogType = 'website', ogImage, noindex = false, article } = Astro.props;
+
+const siteName = `${SITE.author} · DFIR`;
+const fullTitle = title ? `${title} · ${SITE.author}` : `${SITE.author} · DFIR & Forensic CTF`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(ogImage ?? withBase('/og.png'), Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={SITE.author} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<link rel="canonical" href={canonical.href} />
+
+<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+<link rel="alternate" type="application/rss+xml" title={siteName} href={withBase('/rss.xml')} />
+<link rel="sitemap" href={withBase('/sitemap-index.xml')} />
+
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical.href} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content={ogImageUrl.href} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl.href} />
+
+{
+  ogType === 'article' && article?.publishedTime && (
+    <meta property="article:published_time" content={article.publishedTime} />
+  )
+}
+{
+  ogType === 'article' && article?.modifiedTime && (
+    <meta property="article:modified_time" content={article.modifiedTime} />
+  )
+}
+{ogType === 'article' && article?.tags?.map((tg) => <meta property="article:tag" content={tg} />)}
+
+<meta name="theme-color" content="#0b0e14" />
+<meta name="generator" content={Astro.generator} />

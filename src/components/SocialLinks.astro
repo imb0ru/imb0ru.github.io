@@ -1,0 +1,50 @@
+---
+import { SOCIALS } from '../consts';
+import { withBase } from '../lib/url';
+import Icon from './Icon.astro';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const href = (h: string) => (h.startsWith('/') ? withBase(h) : h);
+const external = (h: string) => h.startsWith('http');
+---
+
+<ul class:list={['socials', className]}>
+  {
+    SOCIALS.map((s) => (
+      <li>
+        <a
+          href={href(s.href)}
+          aria-label={s.label}
+          {...(external(s.href) ? { target: '_blank', rel: 'me noopener' } : {})}
+        >
+          <Icon name={s.key} size={18} />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .socials {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .socials a {
+    display: inline-flex;
+    padding: 0.45rem;
+    border-radius: 8px;
+    color: var(--text-dim);
+    transition: color var(--transition), background var(--transition);
+  }
+  .socials a:hover {
+    color: var(--text);
+    background: var(--bg-elev-2);
+  }
+</style>

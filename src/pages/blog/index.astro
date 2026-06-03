@@ -1,0 +1,12 @@
+---
+import { getAllEntries } from '../../lib/content';
+import { t } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogStream from '../../components/BlogStream.astro';
+
+const items = await getAllEntries();
+---
+
+<BaseLayout title={t('blog.title')}>
+  <BlogStream active="all" items={items} />
+</BaseLayout>

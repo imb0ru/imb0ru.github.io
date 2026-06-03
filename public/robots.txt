@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://imb0ru.github.io/sitemap-index.xml

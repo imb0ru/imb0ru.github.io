@@ -1,0 +1,10 @@
+---
+import { t } from '../i18n/ui';
+
+interface Props {
+  level: 'easy' | 'medium' | 'hard' | 'insane';
+}
+const { level } = Astro.props;
+---
+
+<span class="diff" data-level={level}>{t(`difficulty.${level}`)}</span>

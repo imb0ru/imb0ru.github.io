@@ -1,0 +1,111 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Section } from '../consts';
+import { withBase, formatDate } from '../lib/url';
+import { t } from '../i18n/ui';
+import Difficulty from './Difficulty.astro';
+
+interface Props {
+  entry: CollectionEntry<Section>;
+  section: Section;
+}
+const { entry, section } = Astro.props;
+const d = entry.data as Record<string, any>;
+const url = withBase(`/blog/${section}/${entry.id}`);
+
+const typeLabel = t(`type.${section}`);
+const kicker =
+  section === 'writeups'
+    ? d.ctf
+    : section === 'challenges'
+      ? d.event
+      : section === 'research'
+        ? d.venue
+        : d.category;
+
+const pubDate = new Date(d.pubDate);
+const tags: string[] = (d.tags ?? []).slice(0, 3);
+---
+
+<a class="card content-card" href={url}>
+  <div class="card-top">
+    <span class="type-chip" data-type={section}>{typeLabel}</span>
+    {kicker && <span class="card-kicker mono">{kicker}</span>}
+    {d.draft && <span class="tag">{t('meta.draft')}</span>}
+    {d.difficulty && <Difficulty level={d.difficulty} />}
+  </div>
+  <h3 class="card-title">{d.title}</h3>
+  <p class="card-desc">{d.description}</p>
+  <div class="card-foot">
+    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    {
+      tags.length > 0 && (
+        <div class="tag-row">
+          {tags.map((tg) => (
+            <span class="tag">#{tg}</span>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</a>
+
+<style>
+  .content-card {
+    height: 100%;
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    min-height: 1.5rem;
+  }
+  .type-chip {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tag);
+    background: var(--tag-soft);
+    border: 1px solid var(--tag-line);
+    padding: 0.24em 0.5em;
+    border-radius: 6px;
+    line-height: 1;
+  }
+  .card-kicker {
+    font-size: 0.74rem;
+    color: var(--text-dim);
+  }
+  .card-title {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: #f3f5f9;
+    line-height: 1.32;
+  }
+  .card-desc {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-foot {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+  .card-foot time {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+import type { Section } from '../consts';
+import { SECTIONS } from '../consts';
+import { t } from '../i18n/ui';
+import { withBase } from '../lib/url';
+import ContentCard from './ContentCard.astro';
+
+interface Props {
+  active: 'all' | Section;
+  items: { section: Section; entry: any }[];
+}
+const { active, items } = Astro.props;
+
+const filters: { id: 'all' | Section; href: string; label: string }[] = [
+  { id: 'all', href: withBase('/blog'), label: t('filter.all') },
+  ...SECTIONS.map((s) => ({ id: s, href: withBase(`/blog/${s}`), label: t(`type.${s}`) })),
+];
+
+const heading = active === 'all' ? t('blog.title') : t(`type.${active}`);
+const lede = active === 'all' ? t('blog.lede') : t(`type.${active}.lede`);
+---
+
+<section class="container blog">
+  <header class="blog-head">
+    <p class="eyebrow">{t('nav.blog')}</p>
+    <h1>{heading}</h1>
+    <p class="lede">{lede}</p>
+  </header>
+
+  <nav class="filters" aria-label={t('nav.blog')}>
+    {
+      filters.map((f) => (
+        <a
+          href={f.href}
+          class:list={['filter', { active: f.id === active }]}
+          aria-current={f.id === active ? 'page' : undefined}
+        >
+          {f.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  {
+    items.length === 0 ? (
+      <p class="empty">{t('blog.empty')}</p>
+    ) : (
+      <div class="card-grid">
+        {items.map((it) => (
+          <ContentCard entry={it.entry} section={it.section} />
+        ))}
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .blog {
+    padding-top: 3rem;
+    padding-bottom: 1rem;
+  }
+  .blog-head {
+    max-width: 48rem;
+    margin-bottom: 1.6rem;
+  }
+  .blog-head h1 {
+    font-size: var(--fs-2xl);
+    margin-top: 0.6rem;
+  }
+  .blog-head .lede {
+    margin-top: 0.8rem;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter {
+    font-size: 0.85rem;
+    padding: 0.42em 0.9em;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+    color: var(--text-dim);
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
+  }
+  .filter:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    text-decoration: none;
+  }
+  .filter.active {
+    background: var(--accent);
+    border-color: transparent;
+    color: var(--accent-contrast);
+    font-weight: 550;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.1rem;
+  }
+  .empty {
+    color: var(--text-dim);
+    padding: 2.5rem 0;
+    font-size: var(--fs-md);
+  }
+</style>

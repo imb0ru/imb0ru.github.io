@@ -1,0 +1,291 @@
+---
+import { SITE, FOCUS_AREAS, EXPERIENCE, EDUCATION, CERTIFICATIONS } from '../consts';
+import { t } from '../i18n/ui';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Icon from '../components/Icon.astro';
+
+const teamLink = `<a href="${SITE.team.url}" target="_blank" rel="noopener">${SITE.team.name}</a>`;
+const bio2 = t('about.bio2', { team: teamLink });
+const present = t('about.present');
+
+function periodOf(x: { start?: string; end?: string; current?: boolean }): string {
+  if (x.start && x.current) return `${x.start} - ${present}`;
+  if (x.start && x.end) return `${x.start} - ${x.end}`;
+  if (x.current) return present;
+  return x.end ?? x.start ?? '';
+}
+---
+
+<BaseLayout title={t('about.title')}>
+  <section class="container about">
+    <header class="about-head">
+      <p class="eyebrow">{t('about.title')}</p>
+      <h1>{t('about.title')}</h1>
+      <p class="lede">{t('about.lede')}</p>
+    </header>
+
+    <div class="about-grid">
+      <div class="about-main">
+        <div class="about-bio">
+          <p>{t('about.bio1')}</p>
+          <p set:html={bio2}></p>
+        </div>
+
+        <section class="about-block">
+          <h2 class="about-h">{t('about.experience.title')}</h2>
+          <ul class="timeline">
+            {
+              EXPERIENCE.map((e) => (
+                <li class="tl-item">
+                  <div class="tl-top">
+                    <span class="tl-role">{e.role}</span>
+                    <span class="tl-period mono">{periodOf(e)}</span>
+                  </div>
+                  <p class="tl-org">
+                    {e.url ? (
+                      <a href={e.url} target="_blank" rel="noopener">
+                        {e.company}
+                      </a>
+                    ) : (
+                      e.company
+                    )}
+                    {e.location && <span class="tl-loc"> · {e.location}</span>}
+                  </p>
+                  {e.summary && <p class="tl-summary">{e.summary}</p>}
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        {
+          EDUCATION.length > 0 && (
+            <section class="about-block">
+              <h2 class="about-h">{t('about.education.title')}</h2>
+              <ul class="timeline">
+                {EDUCATION.map((e) => (
+                  <li class="tl-item">
+                    <div class="tl-top">
+                      <span class="tl-role">{e.degree}</span>
+                      <span class="tl-period mono">{periodOf(e)}</span>
+                    </div>
+                    <p class="tl-org">
+                      {e.url ? (
+                        <a href={e.url} target="_blank" rel="noopener">
+                          {e.school}
+                        </a>
+                      ) : (
+                        e.school
+                      )}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          CERTIFICATIONS.length > 0 && (
+            <section class="about-block">
+              <h2 class="about-h">{t('about.certs.title')}</h2>
+              <ul class="cert-list">
+                {CERTIFICATIONS.map((c) => (
+                  <li class="cert-item">
+                    <span class="cert-name">
+                      {c.url ? (
+                        <a href={c.url} target="_blank" rel="noopener">
+                          {c.name}
+                        </a>
+                      ) : (
+                        c.name
+                      )}
+                    </span>
+                    <span class="cert-meta mono">
+                      {c.issuer}
+                      {c.year ? ` · ${c.year}` : ''}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <section class="about-block">
+          <h2 class="about-h">{t('about.focus.title')}</h2>
+          <div class="tag-row about-focus">
+            {FOCUS_AREAS.map((f) => <span class="tag">{f}</span>)}
+          </div>
+        </section>
+      </div>
+
+      <aside class="about-aside">
+        <div class="about-card">
+          <h2 class="about-h">{t('about.contact.title')}</h2>
+          <p class="text-dim about-contact-lede">{t('about.contact.lede')}</p>
+          <a class="btn btn-primary about-mail" href={`mailto:${SITE.email}`}>
+            <Icon name="mail" size={16} />
+            {SITE.email}
+          </a>
+          <div class="about-socials"><SocialLinks /></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+  .about-head {
+    max-width: 48rem;
+    margin-bottom: 3rem;
+  }
+  .about-head h1 {
+    font-size: var(--fs-2xl);
+    margin-top: 0.7rem;
+  }
+  .about-head .lede {
+    margin-top: 0.9rem;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 3rem;
+    align-items: start;
+  }
+  .about-bio {
+    font-size: var(--fs-md);
+    line-height: 1.8;
+    color: var(--text);
+    max-width: 42rem;
+  }
+  .about-bio p + p {
+    margin-top: 1.2rem;
+  }
+  .about-block {
+    margin-top: 2.8rem;
+    max-width: 42rem;
+  }
+  .about-h {
+    font-size: 1.15rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Timeline (experience / education) */
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--border);
+  }
+  .tl-item {
+    position: relative;
+    padding: 0 0 1.7rem 1.5rem;
+  }
+  .tl-item:last-child {
+    padding-bottom: 0;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 0.42rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--tag);
+    box-shadow: 0 0 0 3px var(--bg);
+  }
+  .tl-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .tl-role {
+    font-weight: 600;
+    color: #f3f5f9;
+  }
+  .tl-period {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .tl-org {
+    margin-top: 0.15rem;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+  }
+  .tl-summary {
+    margin-top: 0.5rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* Certifications */
+  .cert-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .cert-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cert-name {
+    color: #f3f5f9;
+  }
+  .cert-meta {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+
+  /* Contact card */
+  .about-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+  }
+  .about-card .about-h {
+    margin-bottom: 0.6rem;
+  }
+  .about-contact-lede {
+    font-size: 0.92rem;
+    margin-bottom: 1.2rem;
+  }
+  .about-mail {
+    width: 100%;
+    word-break: break-all;
+  }
+  .about-socials {
+    margin-top: 1.8rem;
+    margin-left: -0.45rem;
+  }
+
+  @media (max-width: 880px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 2.2rem;
+    }
+    .about-card {
+      position: static;
+    }
+  }
+</style>

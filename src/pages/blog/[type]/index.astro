@@ -1,0 +1,19 @@
+---
+import type { Section } from '../../../consts';
+import { SECTIONS } from '../../../consts';
+import { getEntries } from '../../../lib/content';
+import { t } from '../../../i18n/ui';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogStream from '../../../components/BlogStream.astro';
+
+export function getStaticPaths() {
+  return SECTIONS.map((section) => ({ params: { type: section }, props: { section } }));
+}
+
+const { section } = Astro.props as { section: Section };
+const items = (await getEntries(section)).map((entry) => ({ section, entry }));
+---
+
+<BaseLayout title={t(`type.${section}`)}>
+  <BlogStream active={section} items={items} />
+</BaseLayout>

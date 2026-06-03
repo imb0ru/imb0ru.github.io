@@ -1,0 +1,139 @@
+---
+import { NAV, SITE } from '../consts';
+import { withBase } from '../lib/url';
+import { t } from '../i18n/ui';
+import SocialLinks from './SocialLinks.astro';
+
+const year = new Date().getFullYear();
+const homeHref = withBase('/');
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href={homeHref}>
+        <span class="brand-mark" aria-hidden="true">mf</span>
+        <span>Marco Ferrara</span>
+      </a>
+      <p class="footer-role">{t('site.role')}</p>
+      <p class="footer-loc mono">{SITE.location}</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer">
+      {NAV.map((item) => <a href={withBase(item.path)}>{t(item.key)}</a>)}
+    </nav>
+
+    <div class="footer-meta">
+      <SocialLinks />
+      <div class="footer-affil">
+        <p class="footer-team mono">
+          DFIR @ <a href={SITE.employer.url} target="_blank" rel="noopener">{SITE.employer.name}</a>
+        </p>
+        <p class="footer-team mono">
+          CTF @ <a href={SITE.team.url} target="_blank" rel="noopener">{SITE.team.name}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>© {year} {SITE.author}</p>
+    <p class="footer-built">{t('footer.built')}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 5rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(to bottom, transparent, var(--bg-elev));
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 2rem;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .brand:hover {
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--tag);
+    background: var(--tag-soft);
+    border: 1px solid var(--tag-line);
+  }
+  .footer-role {
+    margin-top: 0.8rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .footer-loc {
+    margin-top: 0.2rem;
+    color: var(--text-faint);
+    font-size: 0.78rem;
+  }
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .footer-nav a {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    width: fit-content;
+  }
+  .footer-nav a:hover {
+    color: var(--text);
+  }
+  .footer-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .footer-affil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .footer-team {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+  }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.4rem;
+    padding-bottom: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 0.8rem;
+  }
+  @media (max-width: 720px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

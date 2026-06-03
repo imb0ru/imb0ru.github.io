@@ -1,0 +1,33 @@
+---
+import type { Section } from '../../../consts';
+import { SECTIONS } from '../../../consts';
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const section of SECTIONS) {
+    const entries = await getCollection(section, ({ data }) =>
+      import.meta.env.DEV ? true : !data.draft
+    );
+    for (const entry of entries) {
+      paths.push({ params: { type: section, slug: entry.id }, props: { entry, section } });
+    }
+  }
+  return paths;
+}
+
+const { entry, section } = Astro.props as { entry: any; section: Section };
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
+---
+
+<PostLayout
+  section={section}
+  title={entry.data.title}
+  description={entry.data.description}
+  data={entry.data}
+  headings={headings}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+>
+  <Content />
+</PostLayout>
