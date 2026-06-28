@@ -21,8 +21,4 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-src/content/challenges/*.md
-src/content/challenges/*.mdx
-
-# Private maintainer notes (editing guide) - kept local, not for the public repo
 MAINTENANCE.md

@@ -8,8 +8,25 @@ import ContentCard from './ContentCard.astro';
 interface Props {
   active: 'all' | Section;
   items: { section: Section; entry: any }[];
+  /** Group items under a heading by this frontmatter field (e.g. CTF name). */
+  groupBy?: 'ctf' | 'event';
 }
-const { active, items } = Astro.props;
+const { active, items, groupBy } = Astro.props;
+
+// Items arrive sorted by pubDate desc, so first-seen order puts the most
+// recent CTF first and keeps each group's entries in date order.
+const groups = groupBy
+  ? (() => {
+      const map = new Map<string, typeof items>();
+      for (const it of items) {
+        const key = (it.entry.data[groupBy] as string | undefined)?.trim() || t('blog.ungrouped');
+        const bucket = map.get(key);
+        if (bucket) bucket.push(it);
+        else map.set(key, [it]);
+      }
+      return [...map.entries()].map(([label, groupItems]) => ({ label, items: groupItems }));
+    })()
+  : null;
 
 const filters: { id: 'all' | Section; href: string; label: string }[] = [
   { id: 'all', href: withBase('/blog'), label: t('filter.all') },
@@ -44,6 +61,17 @@ const lede = active === 'all' ? t('blog.lede') : t(`type.${active}.lede`);
   {
     items.length === 0 ? (
       <p class="empty">{t('blog.empty')}</p>
+    ) : groups ? (
+      groups.map((group) => (
+        <section class="group">
+          <h2 class="group-head">{group.label}</h2>
+          <div class="card-grid">
+            {group.items.map((it) => (
+              <ContentCard entry={it.entry} section={it.section} />
+            ))}
+          </div>
+        </section>
+      ))
     ) : (
       <div class="card-grid">
         {items.map((it) => (
@@ -102,6 +130,16 @@ const lede = active === 'all' ? t('blog.lede') : t(`type.${active}.lede`);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
     gap: 1.1rem;
+  }
+  .group + .group {
+    margin-top: 2.4rem;
+  }
+  .group-head {
+    font-size: var(--fs-lg);
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
   }
   .empty {
     color: var(--text-dim);

@@ -23,6 +23,7 @@ export const ui = {
   'blog.title': 'Blog',
   'blog.lede': 'Everything in one place, writeups, challenges, research, and notes.',
   'blog.empty': 'Nothing here yet, check back soon.',
+  'blog.ungrouped': 'Other',
   'filter.all': 'All',
 
   'type.writeups': 'Writeups',

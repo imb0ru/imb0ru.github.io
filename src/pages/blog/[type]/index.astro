@@ -12,8 +12,10 @@ export function getStaticPaths() {
 
 const { section } = Astro.props as { section: Section };
 const items = (await getEntries(section)).map((entry) => ({ section, entry }));
+
+const groupBy = section === 'writeups' ? 'ctf' : section === 'challenges' ? 'event' : undefined;
 ---
 
 <BaseLayout title={t(`type.${section}`)}>
-  <BlogStream active={section} items={items} />
+  <BlogStream active={section} items={items} groupBy={groupBy} />
 </BaseLayout>
