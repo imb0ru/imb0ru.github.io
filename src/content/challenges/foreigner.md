@@ -20,9 +20,11 @@ The title, **Foreigner**, is the main clue. The objective is to determine the ex
 
 ## Step 1 Interpret the title
 
-The challenge description is the real hint: *"I went abroad without boarding a plane."* The key word is **without a plane**, the destination is a foreign country reachable overland from Italy, by train or by car, with no flight involved. That rules out distant destinations and points to somewhere just across a border or to one of the enclaves embedded inside Italy itself, close enough to drive or take a train to.
+The challenge description is the real hint: *"I went abroad without boarding a plane."* The key word is **without a plane**, the destination is a foreign country reachable overland from the player's home country, by train or by car, with no flight involved. That rules out distant destinations and points to somewhere just across a border or to one of the enclaves embedded inside the home country itself, close enough to drive or take a train to.
 
-For an Italian player, the most likely nearby foreign locations reachable without flying are:
+But which home country? The puzzle only works once you fix a starting point, and that starting point is **Italy**. A reasonable question is how to know that, since plenty of countries are surrounded by land and have neighbours reachable overland. The answer is a general OSINT heuristic rather than something in the photo: when a challenge hinges on an unstated "home" location, the safest assumption is the **nationality of the organizing team**. Mntcrl is an Italian team, so the intended frame of reference is Italy. From there, "abroad without a plane" naturally points to Italy's overland neighbours and enclaves.
+
+Starting from Italy, the most likely nearby foreign locations reachable without flying are:
 
 - Vatican City
 - San Marino
