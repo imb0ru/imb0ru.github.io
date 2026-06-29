@@ -88,18 +88,20 @@ The Botconf slides confirm this under the *FlowCloud Capabilities* diagram:
 The integer audio surveillance activation threshold is **`65`**. This is the second half of the flag-derivation string.
 
 ## Step 6 Construct the flag
-
-The challenge specifies the flag as the lowercase SHA1 of the concatenation, with no separators and no whitespace, of the four-letter shared codename component followed by the integer audio threshold in decibels:
+The challenge specifies the flag as the lowercase SHA1 of the concatenation, no separators, no whitespace, of the shared codename component and the integer threshold:
 
 ```text
-Frog65
+frog65
 ```
 
 Hashing:
 
-```bash
-$ echo -n "Frog65" | sha1sum
-bce05158c0bd94550452fac45f72a661aec7cb26
+```text
+$ echo -n "frog65" | sha1sum
+797c97835a265a57445cc271c51ccf313f6eb1ab
 ```
 
-**Flag:** `mntcrl{bce05158c0bd94550452fac45f72a661aec7cb26}`
+---
+
+## Final Flag
+`mntcrl{797c97835a265a57445cc271c51ccf313f6eb1ab}`
